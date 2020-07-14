@@ -1,32 +1,34 @@
 <?php
 
-function Baglan($url){
-	$curl=curl_init();
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-	/*curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,0);
-	curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,0);*/
-	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-	$cikti=curl_exec($curl);
-	echo curl_error($curl);
-	curl_close($curl);
-	return str_replace(array("\n","\t","\r"),null,$cikti);
+function Baglan($url)
+{
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    /*curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,0);
+    curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,0);*/
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+    $cikti = curl_exec($curl);
+    echo curl_error($curl);
+    curl_close($curl);
+
+    return str_replace(["\n", "\t", "\r"], null, $cikti);
 }
 
-function permalink($str, $options = array())
+function permalink($str, $options = [])
 {
-    $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
-    $defaults = array(
-        'delimiter' => '-',
-        'limit' => null,
-        'lowercase' => true,
-        'replacements' => array(),
-        'transliterate' => true
-    );
+    $str = mb_convert_encoding((string) $str, 'UTF-8', mb_list_encodings());
+    $defaults = [
+        'delimiter'     => '-',
+        'limit'         => null,
+        'lowercase'     => true,
+        'replacements'  => [],
+        'transliterate' => true,
+    ];
     $options = array_merge($defaults, $options);
-    $char_map = array(
+    $char_map = [
         // Latin
         'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE', 'Ç' => 'C',
         'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
@@ -82,35 +84,33 @@ function permalink($str, $options = array())
         'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N',
         'Š' => 'S', 'Ū' => 'u', 'Ž' => 'Z',
         'ā' => 'a', 'č' => 'c', 'ē' => 'e', 'ģ' => 'g', 'ī' => 'i', 'ķ' => 'k', 'ļ' => 'l', 'ņ' => 'n',
-        'š' => 's', 'ū' => 'u', 'ž' => 'z'
-    );
+        'š' => 's', 'ū' => 'u', 'ž' => 'z',
+    ];
     $str = preg_replace(array_keys($options['replacements']), $options['replacements'], $str);
     if ($options['transliterate']) {
         $str = str_replace(array_keys($char_map), $char_map, $str);
     }
     $str = preg_replace('/[^\p{L}\p{Nd}]+/u', $options['delimiter'], $str);
-    $str = preg_replace('/(' . preg_quote($options['delimiter'], '/') . '){2,}/', '$1', $str);
+    $str = preg_replace('/('.preg_quote($options['delimiter'], '/').'){2,}/', '$1', $str);
     $str = mb_substr($str, 0, ($options['limit'] ? $options['limit'] : mb_strlen($str, 'UTF-8')), 'UTF-8');
     $str = trim($str, $options['delimiter']);
+
     return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
 }
 
-function duzenle ($text) {
+function duzenle($text)
+{
+    $gkod = ['<h3 class="title">', '</h3>', '<a>'];
+    $dkod = ['', '', ''];
 
-	$gkod = array('<h3 class="title">','</h3>','<a>');
-	$dkod = array('','','');
+    $ykod = str_replace($gkod, $dkod, $text);
 
-	$ykod = str_replace($gkod,$dkod,$text);
-	return $ykod;
+    return $ykod;
 }
 
 function rasgeleKod()
 {
-$sayi =strrev(substr(rand(1111, 999999), 0, 4));
-return $sayi;
+    $sayi = strrev(substr(rand(1111, 999999), 0, 4));
+
+    return $sayi;
 }
-
-
-
-
-?>
